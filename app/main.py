@@ -1,13 +1,13 @@
 from pyspark.sql import SparkSession
 from pyspark.ml.feature import VectorAssembler, StringIndexer, OneHotEncoder 
 from pyspark.ml import Pipeline 
-from pyspark.ml.classification import LogisticRegression 
+from pyspark.ml.classification import LogisticRegression
+import mlflow.pyfunc
 
 spark: SparkSession =  SparkSession.builder.appName('titanic').getOrCreate()
 df = spark.read.csv('s3a://datalake/raw/titanic/*.csv', inferSchema=True, header=True)
-
+mlflow.set_tracking_uri("http://host.docker.internal:5000")
 # print(spark.sparkContext.getConf().getAll())
-
 
 rm_columns = df.select(['Survived','Pclass', 
                        'Sex','Age','SibSp', 
@@ -42,11 +42,15 @@ pipeline = Pipeline(stages=[sexIdx, embarkIdx,
 
 
 train_data, test_data = result.randomSplit([0.7, .3])
-  
-# Fitting the model on training data 
-fit_model = pipeline.fit(train_data) 
-  
-# Storing the results on test data 
-prediction = fit_model.transform(test_data)
 
-prediction.show()
+# prediction = fit_model.transform(test_data)
+
+# prediction.show()
+
+with mlflow.start_run() as run:
+   fit_model = pipeline.fit(train_data)
+   mlflow.spark.log_model(fit_model, "spark-model")
+   mlflow.log_param("max_iter", 10)
+   mlflow.log_metric("accuracy", 0.8)
+   model_uri = mlflow.get_artifact_uri("spark-model")
+   print(f"Model saved in run {run.info.run_id} at {model_uri}")

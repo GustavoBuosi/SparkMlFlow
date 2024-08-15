@@ -13,10 +13,9 @@ COPY spark-data ${SPARK_HOME}/tmp/spark
 COPY conf/spark-defaults.conf ${SPARK_HOME}/conf/spark-defaults.conf
 COPY conf/pom.xml ${SPARK_HOME}/conf/pom.xml
 COPY scripts ${SPARK_HOME}/scripts
-COPY requirements.txt ${SPARK_HOME}/requirements.txt
-
 RUN mvn -f ${SPARK_HOME}/conf/pom.xml dependency:copy-dependencies -DoutputDirectory=${SPARK_HOME}/jars
 
+COPY requirements.txt ${SPARK_HOME}/requirements.txt
 RUN pip install -r ${SPARK_HOME}/requirements.txt
 
 RUN chmod +x ${SPARK_HOME}/scripts/start-spark.sh
