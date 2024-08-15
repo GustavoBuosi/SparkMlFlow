@@ -1,4 +1,4 @@
-build:
+docker-build:
 	docker build -t spark-mlflow:0.0.1 .
 
 # FIXME: as of now we need to put this in the spark-submit task

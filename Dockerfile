@@ -5,14 +5,18 @@ USER root
 ENV SPARK_HOME=/opt/bitnami/spark
 ENV PATH="${SPARK_HOME}/bin:${PATH}"
 
-RUN apt-get update
-RUN apt-get -y install maven
+RUN apt-get update && \
+    apt-get install -y maven
+    # apt-get install -y maven python3-pip
 
-COPY spark-data /tmp/spark
-COPY conf/spark-defaults.conf /opt/bitnami/spark/conf/spark-defaults.conf
-COPY conf/pom.xml /opt/bitnami/spark/conf/pom.xml
-COPY scripts /opt/bitnami/spark/scripts
+COPY spark-data ${SPARK_HOME}/tmp/spark
+COPY conf/spark-defaults.conf ${SPARK_HOME}/conf/spark-defaults.conf
+COPY conf/pom.xml ${SPARK_HOME}/conf/pom.xml
+COPY scripts ${SPARK_HOME}/scripts
+COPY requirements.txt ${SPARK_HOME}/requirements.txt
 
-RUN chmod +x /opt/bitnami/spark/scripts/start-spark.sh
+RUN mvn -f ${SPARK_HOME}/conf/pom.xml dependency:copy-dependencies -DoutputDirectory=${SPARK_HOME}/jars
 
-RUN mvn -f /opt/bitnami/spark/conf/pom.xml dependency:copy-dependencies -DoutputDirectory=/opt/bitnami/spark/jars
+RUN pip install -r ${SPARK_HOME}/requirements.txt
+
+RUN chmod +x ${SPARK_HOME}/scripts/start-spark.sh
