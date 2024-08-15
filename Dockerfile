@@ -16,5 +16,3 @@ COPY scripts /opt/bitnami/spark/scripts
 RUN chmod +x /opt/bitnami/spark/scripts/start-spark.sh
 
 RUN mvn -f /opt/bitnami/spark/conf/pom.xml dependency:copy-dependencies -DoutputDirectory=/opt/bitnami/spark/jars
-
-# ENTRYPOINT ["/opt/bitnami/scripts/spark/entrypoint.sh"]
