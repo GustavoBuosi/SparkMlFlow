@@ -1,6 +1,5 @@
 services:
   spark:
-    # image: bitnami/spark:3.5.2
     image: spark-mlflow:0.0.1
     container_name: spark
     environment:
@@ -38,7 +37,6 @@ services:
     command: "mlflow server --host 0.0.0.0 --port 5000 --backend-store-uri sqlite:///mlflow.db --default-artifact-root s3://mlflow/mlruns --default-artifact-root s3://mlflow/mlruns"
 
   spark-worker:
-    # image: bitnami/spark:3.5.2
     image: spark-mlflow:0.0.1
     container_name: spark-worker
     environment:
