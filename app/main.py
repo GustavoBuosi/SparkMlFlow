@@ -1,9 +1,7 @@
 import mlflow.pyfunc
 from pyspark.ml import Pipeline
 from pyspark.ml.classification import LogisticRegression
-from pyspark.ml.feature import OneHotEncoder
-from pyspark.ml.feature import StringIndexer
-from pyspark.ml.feature import VectorAssembler
+from pyspark.ml.feature import OneHotEncoder, StringIndexer, VectorAssembler
 from pyspark.sql import SparkSession
 
 SEED = 42
